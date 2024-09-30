@@ -22,9 +22,9 @@ use jf_plonk::{
 use jf_relation::{Circuit, PlonkCircuit};
 use std::time::Instant;
 
-const NUM_REPETITIONS: usize = 10;
-const NUM_GATES_LARGE: usize = 32768;
-const NUM_GATES_SMALL: usize = 8192;
+const NUM_REPETITIONS: usize = 1;
+// const NUM_GATES_LARGE: usize = 32768;
+// const NUM_GATES_SMALL: usize = 8192;
 
 fn gen_circuit_for_bench<F: PrimeField>(
     num_gates: usize,
@@ -75,14 +75,16 @@ macro_rules! plonk_prove_bench {
 }
 
 fn bench_prove() {
-    plonk_prove_bench!(Bls12_381, Fr381, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(Bls12_377, Fr377, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(Bn254, Fr254, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(BW6_761, Fr761, PlonkType::TurboPlonk, NUM_GATES_SMALL);
-    plonk_prove_bench!(Bls12_381, Fr381, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(Bls12_377, Fr377, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(Bn254, Fr254, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_prove_bench!(BW6_761, Fr761, PlonkType::UltraPlonk, NUM_GATES_SMALL);
+    let plonk_type = PlonkType::TurboPlonk; // Specify the PlonkType you want to test.
+
+    // Loop over num_gates from 2^12 to 2^20
+    // TODO: change to the params as you like
+    for i in 12..=20 {
+        let num_gates = 1 << i; // num_gates will be 2^12 to 2^20
+
+        // Apply the macro rule for the Bls12_381 curve and Fr381 field with the TurboPlonk type
+        plonk_prove_bench!(Bls12_381, Fr381, plonk_type, num_gates);
+    }
 }
 
 macro_rules! plonk_verify_bench {
@@ -117,14 +119,15 @@ macro_rules! plonk_verify_bench {
 }
 
 fn bench_verify() {
-    plonk_verify_bench!(Bls12_381, Fr381, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(Bls12_377, Fr377, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(Bn254, Fr254, PlonkType::TurboPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(BW6_761, Fr761, PlonkType::TurboPlonk, NUM_GATES_SMALL);
-    plonk_verify_bench!(Bls12_381, Fr381, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(Bls12_377, Fr377, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(Bn254, Fr254, PlonkType::UltraPlonk, NUM_GATES_LARGE);
-    plonk_verify_bench!(BW6_761, Fr761, PlonkType::UltraPlonk, NUM_GATES_SMALL);
+    let plonk_type = PlonkType::TurboPlonk; // Specify the PlonkType you want to test.
+
+    // Loop over num_gates from 2^12 to 2^20
+    for i in 12..=20 {
+        let num_gates = 1 << i; // num_gates will be 2^12 to 2^20
+
+        // Apply the macro rule for the Bls12_381 curve and Fr381 field with the TurboPlonk type
+        plonk_verify_bench!(Bls12_381, Fr381, plonk_type, num_gates);
+    }
 }
 
 macro_rules! plonk_batch_verify_bench {
@@ -169,18 +172,20 @@ macro_rules! plonk_batch_verify_bench {
 }
 
 fn bench_batch_verify() {
-    plonk_batch_verify_bench!(Bls12_381, Fr381, PlonkType::TurboPlonk, 1000);
-    plonk_batch_verify_bench!(Bls12_377, Fr377, PlonkType::TurboPlonk, 1000);
-    plonk_batch_verify_bench!(Bn254, Fr254, PlonkType::TurboPlonk, 1000);
-    plonk_batch_verify_bench!(BW6_761, Fr761, PlonkType::TurboPlonk, 1000);
-    plonk_batch_verify_bench!(Bls12_381, Fr381, PlonkType::UltraPlonk, 1000);
-    plonk_batch_verify_bench!(Bls12_377, Fr377, PlonkType::UltraPlonk, 1000);
-    plonk_batch_verify_bench!(Bn254, Fr254, PlonkType::UltraPlonk, 1000);
-    plonk_batch_verify_bench!(BW6_761, Fr761, PlonkType::UltraPlonk, 1000);
+    let plonk_type = PlonkType::TurboPlonk; // Specify the PlonkType you want to test.
+    let num_proofs = 1000; // Number of proofs to verify in batch
+
+    // Loop over num_gates from 2^12 to 2^20
+    for i in 12..=20 {
+        let num_gates = 1 << i; // num_gates will be 2^12 to 2^20
+
+        // Apply the macro rule for the Bls12_381 curve and Fr381 field with the TurboPlonk type
+        plonk_batch_verify_bench!(Bls12_381, Fr381, plonk_type, num_proofs);
+    }
 }
 
 fn main() {
     bench_prove();
-    bench_verify();
-    bench_batch_verify();
+    // bench_verify();
+    // bench_batch_verify();
 }
